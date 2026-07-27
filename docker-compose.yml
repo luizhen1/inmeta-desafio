@@ -1,12 +1,13 @@
+version: '3.8'
+
 services:
   mongodb:
-    image: mongo:6.0
+    image: mongo:latest
     container_name: inmeta-mongodb
-    restart: always
     ports:
       - "27017:27017"
-    # O comando abaixo ativa o Replica Set (Obrigatório para Transactions)
-    command: ["--replSet", "rs0", "--bind_ip_all", "--port", "27017"]
+    environment:
+      - MONGO_INITDB_DATABASE=inmetadb
     volumes:
       - mongo_data:/data/db
 
