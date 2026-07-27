@@ -5,6 +5,8 @@ import { CreateEmployeeUseCase } from './core/create-employee.usecase';
 import { EmployeeMongoRepository } from './infra/employee.mongo.repository';
 import { EmployeeModel, EmployeeSchema } from './infra/employee.schema';
 import { EMPLOYEE_REPOSITORY } from './core/employee.repository.interface';
+import { ListEmployeesUseCase } from './core/list-employees.usecase';
+import { GetEmployeeByIdUseCase } from './core/get-employee-by-id.usecase';
 
 @Module({
   imports: [
@@ -15,6 +17,8 @@ import { EMPLOYEE_REPOSITORY } from './core/employee.repository.interface';
   controllers: [EmployeeController],
   providers: [
     CreateEmployeeUseCase,
+    ListEmployeesUseCase,
+    GetEmployeeByIdUseCase,
     {
       provide: EMPLOYEE_REPOSITORY,
       useClass: EmployeeMongoRepository,

@@ -10,7 +10,7 @@ export class EmployeeMongoRepository implements IEmployeeRepository {
   constructor(
     @InjectModel(EmployeeModel.name)
     private readonly employeeModel: Model<EmployeeDocument>,
-  ) {}
+  ) { }
 
   private toDomain(doc: any): Employee {
     return new Employee(
@@ -31,13 +31,21 @@ export class EmployeeMongoRepository implements IEmployeeRepository {
       email: employee.email,
       isActive: employee.isActive,
     });
-    
+
     const savedDoc = await createdEmployee.save();
     return this.toDomain(savedDoc);
   }
 
-  async findAll(): Promise<Employee[]> { return []; }
-  async findById(id: string): Promise<Employee | null> { return null; }
+  async findAll(): Promise<Employee[]> {
+    const docs = await this.employeeModel.find().exec();
+    return docs.map((doc) => this.toDomain(doc));
+  }
+
+  async findById(id: string): Promise<Employee | null> {
+    const doc = await this.employeeModel.findById(id).exec();
+    if (!doc) return null;
+    return this.toDomain(doc);
+  }
   async update(id: string, data: Partial<Employee>): Promise<Employee | null> { return null; }
-  async delete(id: string): Promise<void> {}
+  async delete(id: string): Promise<void> { }
 }
