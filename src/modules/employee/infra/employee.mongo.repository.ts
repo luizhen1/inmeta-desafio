@@ -46,6 +46,17 @@ export class EmployeeMongoRepository implements IEmployeeRepository {
     if (!doc) return null;
     return this.toDomain(doc);
   }
-  async update(id: string, data: Partial<Employee>): Promise<Employee | null> { return null; }
-  async delete(id: string): Promise<void> { }
+  
+  async update(id: string, data: Partial<Employee>): Promise<Employee | null> {
+    const updatedDoc = await this.employeeModel
+      .findByIdAndUpdate(id, { $set: data }, { new: true })
+      .exec();
+
+    if (!updatedDoc) return null;
+    return this.toDomain(updatedDoc);
+  }
+
+  async delete(id: string): Promise<void> {
+    await this.employeeModel.findByIdAndDelete(id).exec();
+  }
 }
