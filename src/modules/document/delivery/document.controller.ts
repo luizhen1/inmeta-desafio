@@ -1,0 +1,68 @@
+import { Controller, Post, Get, Put, Patch, Delete, Param, Body } from '@nestjs/common';
+import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { CreateDocumentUseCase } from '../core/usecases/create-document.usecase';
+import { ListDocumentsUseCase } from '../core/usecases/list-documents.usecase';
+import { GetDocumentByIdUseCase } from '../core/usecases/get-document-by-id.usecase';
+import { UpdateDocumentUseCase } from '../core/usecases/update-document.usecase';
+import { DeleteDocumentUseCase } from '../core/usecases/delete-document.usecase';
+import { CreateDocumentDto } from './dtos/create-document.dto';
+import { UpdateDocumentDto } from './dtos/update-document.dto';
+
+@ApiTags('Documents')
+@Controller('documents')
+export class DocumentController {
+  constructor(
+    private readonly createDocumentUseCase: CreateDocumentUseCase,
+    private readonly listDocumentsUseCase: ListDocumentsUseCase,
+    private readonly getDocumentByIdUseCase: GetDocumentByIdUseCase,
+    private readonly updateDocumentUseCase: UpdateDocumentUseCase,
+    private readonly deleteDocumentUseCase: DeleteDocumentUseCase,
+  ) {}
+
+  @Post()
+  @ApiOperation({ summary: 'Cria um novo documento' })
+  @ApiResponse({ status: 201, description: 'Documento criado com sucesso.' })
+  @ApiResponse({ status: 409, description: 'Este colaborador já possui um documento ativo deste tipo.' })
+  async create(@Body() createDocumentDto: CreateDocumentDto) {
+    return this.createDocumentUseCase.execute(createDocumentDto);
+  }
+
+  @Get()
+  @ApiOperation({ summary: 'Lista todos os documentos' })
+  @ApiResponse({ status: 200, description: 'Lista retornada com sucesso.' })
+  async findAll() {
+    return this.listDocumentsUseCase.execute();
+  }
+
+  @Get(':id')
+  @ApiOperation({ summary: 'Busca um documento pelo ID' })
+  @ApiResponse({ status: 200, description: 'Documento encontrado.' })
+  @ApiResponse({ status: 404, description: 'Documento não encontrado.' })
+  async findOne(@Param('id') id: string) {
+    return this.getDocumentByIdUseCase.execute(id);
+  }
+
+  @Put(':id')
+  @ApiOperation({ summary: 'Atualiza os dados/versão de um documento' })
+  @ApiResponse({ status: 200, description: 'Documento atualizado com sucesso.' })
+  @ApiResponse({ status: 404, description: 'Documento não encontrado.' })
+  async update(@Param('id') id: string, @Body() updateDocumentDto: UpdateDocumentDto) {
+    return this.updateDocumentUseCase.execute(id, updateDocumentDto);
+  }
+
+  @Patch(':id')
+  @ApiOperation({ summary: 'Atualiza campos específicos/versão de um documento' })
+  @ApiResponse({ status: 200, description: 'Documento atualizado parcialmente com sucesso.' })
+  @ApiResponse({ status: 404, description: 'Documento não encontrado.' })
+  async patchUpdate(@Param('id') id: string, @Body() updateDocumentDto: UpdateDocumentDto) {
+    return this.updateDocumentUseCase.execute(id, updateDocumentDto);
+  }
+
+  @Delete(':id')
+  @ApiOperation({ summary: 'Remove um documento pelo ID' })
+  @ApiResponse({ status: 200, description: 'Documento removido com sucesso.' })
+  @ApiResponse({ status: 404, description: 'Documento não encontrado.' })
+  async remove(@Param('id') id: string) {
+    return this.deleteDocumentUseCase.execute(id);
+  }
+}

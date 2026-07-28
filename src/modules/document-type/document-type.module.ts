@@ -1,9 +1,6 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
-import {
-  DocumentTypeModel,
-  DocumentTypeSchema,
-} from './infra/document-type.schema';
+import { DocumentTypeModel, DocumentTypeSchema } from './infra/document-type.schema';
 import { DocumentTypeMongoRepository } from './infra/document-type.mongo.repository';
 import { CreateDocumentTypeUseCase } from './core/usecases/create-document-type.usecase';
 import { ListDocumentTypesUseCase } from './core/usecases/list-document-types.usecase';

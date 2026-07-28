@@ -1,14 +1,13 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
-import { EmployeeController } from './delivery/employee.controller';
-import { CreateEmployeeUseCase } from './core/usecases/create-employee.usecase';
-import { EmployeeMongoRepository } from './infra/employee.mongo.repository';
 import { EmployeeModel, EmployeeSchema } from './infra/employee.schema';
-import { EMPLOYEE_REPOSITORY } from './core/repositories/employee.repository.interface';
+import { EmployeeMongoRepository } from './infra/employee.mongo.repository';
+import { CreateEmployeeUseCase } from './core/usecases/create-employee.usecase';
 import { ListEmployeesUseCase } from './core/usecases/list-employees.usecase';
 import { GetEmployeeByIdUseCase } from './core/usecases/get-employee-by-id.usecase';
 import { UpdateEmployeeUseCase } from './core/usecases/update-employee.usecase';
 import { DeleteEmployeeUseCase } from './core/usecases/delete-employee.usecase';
+import { EmployeeController } from './delivery/employee.controller';
 
 @Module({
   imports: [
@@ -18,15 +17,36 @@ import { DeleteEmployeeUseCase } from './core/usecases/delete-employee.usecase';
   ],
   controllers: [EmployeeController],
   providers: [
-    CreateEmployeeUseCase,
-    ListEmployeesUseCase,
-    GetEmployeeByIdUseCase,
-    UpdateEmployeeUseCase,
-    DeleteEmployeeUseCase,
     {
-      provide: EMPLOYEE_REPOSITORY,
+      provide: 'IEmployeeRepository', // 👈 Token idêntico ao export
       useClass: EmployeeMongoRepository,
     },
+    {
+      provide: CreateEmployeeUseCase,
+      useFactory: (repo) => new CreateEmployeeUseCase(repo),
+      inject: ['IEmployeeRepository'],
+    },
+    {
+      provide: ListEmployeesUseCase,
+      useFactory: (repo) => new ListEmployeesUseCase(repo),
+      inject: ['IEmployeeRepository'],
+    },
+    {
+      provide: GetEmployeeByIdUseCase,
+      useFactory: (repo) => new GetEmployeeByIdUseCase(repo),
+      inject: ['IEmployeeRepository'],
+    },
+    {
+      provide: UpdateEmployeeUseCase,
+      useFactory: (repo) => new UpdateEmployeeUseCase(repo),
+      inject: ['IEmployeeRepository'],
+    },
+    {
+      provide: DeleteEmployeeUseCase,
+      useFactory: (repo) => new DeleteEmployeeUseCase(repo),
+      inject: ['IEmployeeRepository'],
+    },
   ],
+  exports: ['IEmployeeRepository'],
 })
 export class EmployeeModule {}
