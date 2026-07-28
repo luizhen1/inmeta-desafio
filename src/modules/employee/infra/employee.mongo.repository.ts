@@ -10,15 +10,15 @@ export class EmployeeMongoRepository implements IEmployeeRepository {
   constructor(
     @InjectModel(EmployeeModel.name)
     private readonly employeeModel: Model<EmployeeDocument>,
-  ) { }
+  ) {}
 
   private toDomain(doc: any): Employee {
     return new Employee(
       doc.name,
       doc.cpf,
       doc.email,
-      doc.isActive,
       doc._id.toString(),
+      doc.deletedAt,
       doc.createdAt,
       doc.updatedAt,
     );
@@ -29,7 +29,7 @@ export class EmployeeMongoRepository implements IEmployeeRepository {
       name: employee.name,
       cpf: employee.cpf,
       email: employee.email,
-      isActive: employee.isActive,
+      deletedAt: employee.deletedAt ?? null,
     });
 
     const savedDoc = await createdEmployee.save();
@@ -37,19 +37,19 @@ export class EmployeeMongoRepository implements IEmployeeRepository {
   }
 
   async findAll(): Promise<Employee[]> {
-    const docs = await this.employeeModel.find().exec();
+    const docs = await this.employeeModel.find({ deletedAt: null }).exec();
     return docs.map((doc) => this.toDomain(doc));
   }
 
   async findById(id: string): Promise<Employee | null> {
-    const doc = await this.employeeModel.findById(id).exec();
+    const doc = await this.employeeModel.findOne({ _id: id, deletedAt: null }).exec();
     if (!doc) return null;
     return this.toDomain(doc);
   }
-  
+
   async update(id: string, data: Partial<Employee>): Promise<Employee | null> {
     const updatedDoc = await this.employeeModel
-      .findByIdAndUpdate(id, { $set: data }, { new: true })
+      .findOneAndUpdate({ _id: id, deletedAt: null }, { $set: data }, { new: true })
       .exec();
 
     if (!updatedDoc) return null;
@@ -57,17 +57,19 @@ export class EmployeeMongoRepository implements IEmployeeRepository {
   }
 
   async delete(id: string): Promise<void> {
-    await this.employeeModel.findByIdAndDelete(id).exec();
+    await this.employeeModel
+      .findByIdAndUpdate(id, { $set: { deletedAt: new Date() } })
+      .exec();
   }
 
   async findByCpf(cpf: string): Promise<Employee | null> {
-    const doc = await this.employeeModel.findOne({ cpf }).exec();
+    const doc = await this.employeeModel.findOne({ cpf, deletedAt: null }).exec();
     if (!doc) return null;
     return this.toDomain(doc);
   }
 
   async findByEmail(email: string): Promise<Employee | null> {
-    const doc = await this.employeeModel.findOne({ email }).exec();
+    const doc = await this.employeeModel.findOne({ email, deletedAt: null }).exec();
     if (!doc) return null;
     return this.toDomain(doc);
   }

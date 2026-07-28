@@ -7,7 +7,7 @@ export class CreateEmployeeDto {
   @IsNotEmpty()
   name!: string;
 
-  @ApiProperty({ example: '12345678900', description: 'CPF contendo apenas números' })
+  @ApiProperty({ example: '96841143035', description: 'CPF contendo apenas números' })
   @IsString()
   @IsNotEmpty()
   cpf!: string;

@@ -3,7 +3,7 @@ export class Employee {
     name: string;
     cpf: string;
     email: string;
-    isActive: boolean;
+    deletedAt?: Date | null;
     createdAt?: Date;
     updatedAt?: Date;
 
@@ -11,7 +11,7 @@ export class Employee {
         name: string,
         cpf: string,
         email: string,
-        isActive: boolean = true,
+        deletedAt?: Date | null,
         id?: string,
         createdAt?: Date,
         updatedAt?: Date,
@@ -19,7 +19,7 @@ export class Employee {
         this.name = name;
         this.cpf = cpf;
         this.email = email;
-        this.isActive = isActive;
+        this.deletedAt = deletedAt ?? null;
         this.id = id;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
@@ -29,7 +29,11 @@ export class Employee {
     // Este método demonstra o encapsulamento de regras de negócio puras (Domain Logic).
     // Qualquer comportamento intrínseco ao colaborador reside exclusivamente nesta Entidade,
     // garantindo que o coração do sistema permaneça 100% agnóstico a bancos de dados ou frameworks.
-    deactivate(): void {
-        this.isActive = false;
+    delete(): void {
+        this.deletedAt = new Date();
+    }
+
+    isDeleted(): boolean {
+        return this.deletedAt !== null && this.deletedAt !== undefined;
     }
 }
