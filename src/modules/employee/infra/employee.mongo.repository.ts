@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import type { IEmployeeRepository } from '../core/employee.repository.interface';
-import { Employee } from '../core/employee.entity';
+import type { IEmployeeRepository } from '../core/repositories/employee.repository.interface';
+import { Employee } from '../core/entities/employee.entity';
 import { EmployeeModel, EmployeeDocument } from './employee.schema';
 
 @Injectable()
@@ -58,5 +58,17 @@ export class EmployeeMongoRepository implements IEmployeeRepository {
 
   async delete(id: string): Promise<void> {
     await this.employeeModel.findByIdAndDelete(id).exec();
+  }
+
+  async findByCpf(cpf: string): Promise<Employee | null> {
+    const doc = await this.employeeModel.findOne({ cpf }).exec();
+    if (!doc) return null;
+    return this.toDomain(doc);
+  }
+
+  async findByEmail(email: string): Promise<Employee | null> {
+    const doc = await this.employeeModel.findOne({ email }).exec();
+    if (!doc) return null;
+    return this.toDomain(doc);
   }
 }

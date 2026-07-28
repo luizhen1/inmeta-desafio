@@ -1,10 +1,10 @@
 import { Controller, Post, Get, Put, Delete,Patch, Param, Body } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
-import { CreateEmployeeUseCase } from '../core/create-employee.usecase';
-import { ListEmployeesUseCase } from '../core/list-employees.usecase';
-import { GetEmployeeByIdUseCase } from '../core/get-employee-by-id.usecase';
-import { UpdateEmployeeUseCase } from '../core/update-employee.usecase';
-import { DeleteEmployeeUseCase } from '../core/delete-employee.usecase';
+import { CreateEmployeeUseCase } from '../core/usecases/create-employee.usecase';
+import { ListEmployeesUseCase } from '../core/usecases/list-employees.usecase';
+import { GetEmployeeByIdUseCase } from '../core/usecases/get-employee-by-id.usecase';
+import { UpdateEmployeeUseCase } from '../core/usecases/update-employee.usecase';
+import { DeleteEmployeeUseCase } from '../core/usecases/delete-employee.usecase';
 import { CreateEmployeeDto } from './employee.dto';
 import { UpdateEmployeeDto } from './update-employee.dto';
 
