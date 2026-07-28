@@ -1,7 +1,19 @@
-import { Injectable, Inject } from '@nestjs/common';
+import {
+  Injectable,
+  Inject,
+  BadRequestException,
+  ConflictException,
+} from '@nestjs/common';
 import { Employee } from './employee.entity';
 import { EMPLOYEE_REPOSITORY } from './employee.repository.interface';
 import type { IEmployeeRepository } from './employee.repository.interface';
+import { CpfValidator } from './cpf.validator';
+
+export interface CreateEmployeeInput {
+  name: string;
+  cpf: string;
+  email: string;
+}
 
 @Injectable()
 export class CreateEmployeeUseCase {
@@ -10,8 +22,33 @@ export class CreateEmployeeUseCase {
     private readonly employeeRepository: IEmployeeRepository,
   ) {}
 
-  async execute(data: { name: string; cpf: string; email: string }): Promise<Employee> {
-    const employee = new Employee(data.name, data.cpf, data.email);
+  async execute(input: CreateEmployeeInput): Promise<Employee> {
+    const cleanCpf = input.cpf.replace(/\D/g, '');
+
+    // 2. Validação Matemática do CPF
+    if (!CpfValidator.isValid(cleanCpf)) {
+      throw new BadRequestException('O CPF informado é inválido.');
+    }
+
+    // 3. Regra de Negócio: Impedir CPF duplicado
+    const existingCpf = await this.employeeRepository.findByCpf(cleanCpf);
+    if (existingCpf) {
+      throw new ConflictException('Já existe um colaborador cadastrado com este CPF.');
+    }
+
+    // 4. Regra de Negócio: Impedir E-mail duplicado
+    const existingEmail = await this.employeeRepository.findByEmail(input.email);
+    if (existingEmail) {
+      throw new ConflictException('Já existe um colaborador cadastrado com este e-mail.');
+    }
+
+    // 5. Instancia a Entidade
+    const employee = new Employee(
+      input.name,
+      cleanCpf,
+      input.email,
+    );
+
     return this.employeeRepository.create(employee);
   }
 }

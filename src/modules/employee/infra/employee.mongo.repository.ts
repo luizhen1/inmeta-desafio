@@ -59,4 +59,16 @@ export class EmployeeMongoRepository implements IEmployeeRepository {
   async delete(id: string): Promise<void> {
     await this.employeeModel.findByIdAndDelete(id).exec();
   }
+
+  async findByCpf(cpf: string): Promise<Employee | null> {
+    const doc = await this.employeeModel.findOne({ cpf }).exec();
+    if (!doc) return null;
+    return this.toDomain(doc);
+  }
+
+  async findByEmail(email: string): Promise<Employee | null> {
+    const doc = await this.employeeModel.findOne({ email }).exec();
+    if (!doc) return null;
+    return this.toDomain(doc);
+  }
 }
