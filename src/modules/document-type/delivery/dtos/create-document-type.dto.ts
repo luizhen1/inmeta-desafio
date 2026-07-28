@@ -9,7 +9,7 @@ export class CreateDocumentTypeDto {
 
   @ApiProperty({example: 'Conta de luz, água ou telefone emitida nos últimos 90 dias',
     description: 'Descrição detalhada sobre o documento exigido',
-    required: false, // 👈 Define como opcional no Swagger
+    required: false,
   })
   @IsString({ message: 'A descrição deve ser uma string.' })
   @IsOptional()
