@@ -26,6 +26,7 @@ describe('GenerateUploadUrlUseCase', () => {
     expect(storageProvider.generatePresignedUploadUrl).toHaveBeenCalledWith(
       'doc.pdf',
       'application/pdf',
+      1024,
     );
     expect(result).toEqual(mockResponse);
   });

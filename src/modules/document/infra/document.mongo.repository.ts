@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
-import type { IDocumentRepository } from '../core/repositories/document.repository.interface';
+import { Model, Types } from 'mongoose';
+import type { FindAllFilters, IDocumentRepository, PaginatedResult } from '../core/repositories/document.repository.interface';
 import { Document } from '../core/entities/document.entity';
 import { DocumentVersion } from '../core/entities/document-version.value-object';
 import { DocumentModel, DocumentDocument } from './document.schema';
@@ -45,9 +45,33 @@ export class DocumentMongoRepository implements IDocumentRepository {
     return this.toDomain(savedDoc);
   }
 
-  async findAll(): Promise<Document[]> {
-    const docs = await this.model.find({ deletedAt: null }).exec();
-    return docs.map((doc) => this.toDomain(doc));
+// Adicione a importação de FindAllFilters e PaginatedResult no topo
+  async findAll(filters: FindAllFilters): Promise<PaginatedResult<Document>> {
+    const query: any = { deletedAt: null };
+
+    if (filters.employeeId) {
+      query.employeeId = new Types.ObjectId(filters.employeeId);
+    }
+    if (filters.documentTypeId) {
+      query.documentTypeId = new Types.ObjectId(filters.documentTypeId);
+    }
+    if (filters.status) {
+      query.status = filters.status;
+    }
+
+    const skip = (filters.page - 1) * filters.limit;
+
+    const [docs, total] = await Promise.all([
+      this.model.find(query).skip(skip).limit(filters.limit).exec(),
+      this.model.countDocuments(query).exec(),
+    ]);
+
+    return {
+      data: docs.map((doc) => this.toDomain(doc)),
+      total,
+      page: filters.page,
+      limit: filters.limit,
+    };
   }
 
   async findById(id: string): Promise<Document | null> {

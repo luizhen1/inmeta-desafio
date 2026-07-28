@@ -1,4 +1,4 @@
-import { Controller, Post, Get, Put, Patch, Delete, Param, Body } from '@nestjs/common';
+import { Controller, Post, Get, Put, Patch, Delete, Param, Body, Query } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { CreateDocumentUseCase } from '../core/usecases/create-document.usecase';
 import { ListDocumentsUseCase } from '../core/usecases/list-documents.usecase';
@@ -9,6 +9,7 @@ import { CreateDocumentDto } from './dtos/create-document.dto';
 import { UpdateDocumentDto } from './dtos/update-document.dto';
 import { GenerateUploadUrlUseCase } from '../core/usecases/generate-upload-url.usecase';
 import { GenerateUploadUrlDto } from './dtos/generate-upload-url.dto';
+import { ListDocumentsDto } from './dtos/list-documents.dto';
 
 @ApiTags('Documents')
 @Controller('documents')
@@ -38,10 +39,16 @@ export class DocumentController {
   }
 
   @Get()
-  @ApiOperation({ summary: 'Lista todos os documentos' })
+  @ApiOperation({ summary: 'Lista os documentos com filtros e paginação' })
   @ApiResponse({ status: 200, description: 'Lista retornada com sucesso.' })
-  async findAll() {
-    return this.listDocumentsUseCase.execute();
+  async findAll(@Query() filters: ListDocumentsDto) {
+    return this.listDocumentsUseCase.execute({
+      page: filters.page ?? 1,
+      limit: filters.limit ?? 10,
+      employeeId: filters.employeeId,
+      documentTypeId: filters.documentTypeId,
+      status: filters.status,
+    });
   }
 
   @Get(':id')
