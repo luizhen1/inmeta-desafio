@@ -7,6 +7,8 @@ import { UpdateDocumentUseCase } from '../core/usecases/update-document.usecase'
 import { DeleteDocumentUseCase } from '../core/usecases/delete-document.usecase';
 import { CreateDocumentDto } from './dtos/create-document.dto';
 import { UpdateDocumentDto } from './dtos/update-document.dto';
+import { GenerateUploadUrlUseCase } from '../core/usecases/generate-upload-url.usecase';
+import { GenerateUploadUrlDto } from './dtos/generate-upload-url.dto';
 
 @ApiTags('Documents')
 @Controller('documents')
@@ -17,7 +19,15 @@ export class DocumentController {
     private readonly getDocumentByIdUseCase: GetDocumentByIdUseCase,
     private readonly updateDocumentUseCase: UpdateDocumentUseCase,
     private readonly deleteDocumentUseCase: DeleteDocumentUseCase,
-  ) {}
+    private readonly generateUploadUrlUseCase: GenerateUploadUrlUseCase,
+  ) { }
+
+  @Post('upload-url')
+  @ApiOperation({ summary: 'Gera uma URL pré-assinada (Presigned URL) para upload simulado no S3' })
+  @ApiResponse({ status: 201, description: 'URL pré-assinada gerada com sucesso.' })
+  async generateUploadUrl(@Body() dto: GenerateUploadUrlDto) {
+    return this.generateUploadUrlUseCase.execute(dto.fileName, dto.mimeType, dto.fileSizeInBytes);
+  }
 
   @Post()
   @ApiOperation({ summary: 'Cria um novo documento' })

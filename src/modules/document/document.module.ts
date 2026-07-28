@@ -7,6 +7,8 @@ import { ListDocumentsUseCase } from './core/usecases/list-documents.usecase';
 import { GetDocumentByIdUseCase } from './core/usecases/get-document-by-id.usecase';
 import { UpdateDocumentUseCase } from './core/usecases/update-document.usecase';
 import { DeleteDocumentUseCase } from './core/usecases/delete-document.usecase';
+import { GenerateUploadUrlUseCase } from './core/usecases/generate-upload-url.usecase'; // 👈 Importe o UseCase
+import { MockStorageProvider } from './infra/storage/mock-storage.provider'; // 👈 Importe o Storage Provider
 import { DocumentController } from './delivery/document.controller';
 import { EmployeeModule } from '../employee/employee.module';
 import { DocumentTypeModule } from '../document-type/document-type.module';
@@ -16,14 +18,23 @@ import { DocumentTypeModule } from '../document-type/document-type.module';
     MongooseModule.forFeature([
       { name: DocumentModel.name, schema: DocumentSchema },
     ]),
-    EmployeeModule,     // 👈 Importando para ter acesso ao IEmployeeRepository
-    DocumentTypeModule, // 👈 Importando para ter acesso ao IDocumentTypeRepository
+    EmployeeModule,
+    DocumentTypeModule,
   ],
   controllers: [DocumentController],
   providers: [
     {
       provide: 'IDocumentRepository',
       useClass: DocumentMongoRepository,
+    },
+    {
+      provide: 'IStorageProvider',
+      useClass: MockStorageProvider,
+    },
+    {
+      provide: GenerateUploadUrlUseCase,
+      useFactory: (storage) => new GenerateUploadUrlUseCase(storage),
+      inject: ['IStorageProvider'],
     },
     {
       provide: CreateDocumentUseCase,
