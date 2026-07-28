@@ -5,8 +5,8 @@ import { ListEmployeesUseCase } from '../core/usecases/list-employees.usecase';
 import { GetEmployeeByIdUseCase } from '../core/usecases/get-employee-by-id.usecase';
 import { UpdateEmployeeUseCase } from '../core/usecases/update-employee.usecase';
 import { DeleteEmployeeUseCase } from '../core/usecases/delete-employee.usecase';
-import { CreateEmployeeDto } from './employee.dto';
-import { UpdateEmployeeDto } from './update-employee.dto';
+import { CreateEmployeeDto } from './dtos/create-employee.dto';
+import { UpdateEmployeeDto } from './dtos/update-employee.dto';
 
 @ApiTags('Employees')
 @Controller('employees')
