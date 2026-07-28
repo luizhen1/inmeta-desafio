@@ -1,7 +1,7 @@
 import { Injectable, Inject, NotFoundException } from '@nestjs/common';
-import { Employee } from './employee.entity';
-import { EMPLOYEE_REPOSITORY } from './employee.repository.interface';
-import type { IEmployeeRepository } from './employee.repository.interface';
+import { Employee } from '../entities/employee.entity';
+import { EMPLOYEE_REPOSITORY } from '../repositories/employee.repository.interface';
+import type { IEmployeeRepository } from '../repositories/employee.repository.interface';
 
 @Injectable()
 export class UpdateEmployeeUseCase {

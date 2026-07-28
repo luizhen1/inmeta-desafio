@@ -1,23 +1,22 @@
 import { Injectable, Inject, NotFoundException } from '@nestjs/common';
-import { EMPLOYEE_REPOSITORY } from './employee.repository.interface';
-import type { IEmployeeRepository } from './employee.repository.interface';
+import { Employee } from '../entities/employee.entity';
+import { EMPLOYEE_REPOSITORY } from '../repositories/employee.repository.interface';
+import type { IEmployeeRepository } from '../repositories/employee.repository.interface';
 
 @Injectable()
-export class DeleteEmployeeUseCase {
+export class GetEmployeeByIdUseCase {
   constructor(
     @Inject(EMPLOYEE_REPOSITORY)
     private readonly employeeRepository: IEmployeeRepository,
   ) {}
 
-  async execute(id: string): Promise<{ message: string }> {
+  async execute(id: string): Promise<Employee> {
     const employee = await this.employeeRepository.findById(id);
-
+    
     if (!employee) {
       throw new NotFoundException(`Colaborador com ID ${id} não foi encontrado.`);
     }
 
-    await this.employeeRepository.delete(id);
-
-    return { message: 'Colaborador removido com sucesso.' };
+    return employee;
   }
 }

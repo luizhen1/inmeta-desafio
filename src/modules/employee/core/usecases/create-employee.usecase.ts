@@ -4,10 +4,10 @@ import {
   BadRequestException,
   ConflictException,
 } from '@nestjs/common';
-import { Employee } from './employee.entity';
-import { EMPLOYEE_REPOSITORY } from './employee.repository.interface';
-import type { IEmployeeRepository } from './employee.repository.interface';
-import { CpfValidator } from './cpf.validator';
+import { Employee } from './../entities/employee.entity';
+import { EMPLOYEE_REPOSITORY } from './../repositories/employee.repository.interface';
+import type { IEmployeeRepository } from './../repositories/employee.repository.interface';
+import { CpfValidator } from './../validators/cpf.validator';
 
 export interface CreateEmployeeInput {
   name: string;
