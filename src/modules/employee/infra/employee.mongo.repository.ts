@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import type { IEmployeeRepository } from '../core/employee.repository.interface';
-import { Employee } from '../core/employee.entity';
+import type { IEmployeeRepository } from '../core/repositories/employee.repository.interface';
+import { Employee } from '../core/entities/employee.entity';
 import { EmployeeModel, EmployeeDocument } from './employee.schema';
 
 @Injectable()
