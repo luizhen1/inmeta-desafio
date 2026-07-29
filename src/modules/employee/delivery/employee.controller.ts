@@ -1,4 +1,4 @@
-import { Controller, Post, Get, Put, Delete,Patch, Param, Body } from '@nestjs/common';
+import { Controller, Post, Get, Put, Delete, Patch, Param, Body } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { CreateEmployeeUseCase } from '../core/usecases/create-employee.usecase';
 import { ListEmployeesUseCase } from '../core/usecases/list-employees.usecase';
@@ -17,13 +17,18 @@ export class EmployeeController {
     private readonly getEmployeeByIdUseCase: GetEmployeeByIdUseCase,
     private readonly updateEmployeeUseCase: UpdateEmployeeUseCase,
     private readonly deleteEmployeeUseCase: DeleteEmployeeUseCase,
-  ) {}
+  ) { }
 
   @Post()
-  @ApiOperation({ summary: 'Cria um novo colaborador' })
-  @ApiResponse({ status: 201, description: 'Colaborador criado com sucesso.' })
   async create(@Body() createEmployeeDto: CreateEmployeeDto) {
-    return this.createEmployeeUseCase.execute(createEmployeeDto);
+    return this.createEmployeeUseCase.execute({
+      name: createEmployeeDto.name,
+      email: createEmployeeDto.email,
+      cpf: createEmployeeDto.cpf,
+      role: createEmployeeDto.role,
+      department: createEmployeeDto.department,
+      requiredDocumentTypes: createEmployeeDto.requiredDocumentTypes, 
+    });
   }
 
   @Get()

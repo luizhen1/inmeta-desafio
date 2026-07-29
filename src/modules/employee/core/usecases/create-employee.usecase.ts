@@ -13,6 +13,9 @@ export interface CreateEmployeeInput {
   name: string;
   cpf: string;
   email: string;
+  role?: string;
+  department?: string;
+  requiredDocumentTypes?: string[];
 }
 
 @Injectable()
@@ -42,11 +45,14 @@ export class CreateEmployeeUseCase {
       throw new ConflictException('Já existe um colaborador cadastrado com este e-mail.');
     }
 
-    // 5. Instancia a Entidade
+    // 5. Instancia a Entidade passando os novos campos
     const employee = new Employee(
       input.name,
       cleanCpf,
       input.email,
+      input.role,
+      input.department,
+      input.requiredDocumentTypes || [],
     );
 
     return this.employeeRepository.create(employee);
