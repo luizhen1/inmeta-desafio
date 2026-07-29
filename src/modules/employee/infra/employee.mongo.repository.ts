@@ -10,15 +10,18 @@ export class EmployeeMongoRepository implements IEmployeeRepository {
   constructor(
     @InjectModel(EmployeeModel.name)
     private readonly employeeModel: Model<EmployeeDocument>,
-  ) {}
+  ) { }
 
   private toDomain(doc: any): Employee {
     return new Employee(
       doc.name,
       doc.cpf,
       doc.email,
-      doc._id.toString(),
+      doc.role,
+      doc.department,
+      doc.requiredDocumentTypes?.map((id: any) => id.toString()) || [],
       doc.deletedAt,
+      doc._id.toString(),
       doc.createdAt,
       doc.updatedAt,
     );
@@ -29,11 +32,14 @@ export class EmployeeMongoRepository implements IEmployeeRepository {
       name: employee.name,
       cpf: employee.cpf,
       email: employee.email,
-      deletedAt: employee.deletedAt ?? null,
+      role: employee.role,
+      department: employee.department,
+      requiredDocumentTypes: employee.requiredDocumentTypes,
+      deletedAt: employee.deletedAt,
     });
 
-    const savedDoc = await createdEmployee.save();
-    return this.toDomain(savedDoc);
+    const saved = await createdEmployee.save();
+    return this.toDomain(saved);
   }
 
   async findAll(): Promise<Employee[]> {

@@ -3,6 +3,7 @@ import { EmployeeModule } from './modules/employee/employee.module';
 import { MongooseModule } from '@nestjs/mongoose/dist/mongoose.module';
 import { DocumentTypeModule } from './modules/document-type/document-type.module';
 import { DocumentModule } from './modules/document/document.module';
+import { DashboardModule } from './modules/dashboard/dashboard.module';
 
 @Module({
   imports: [
@@ -10,6 +11,7 @@ import { DocumentModule } from './modules/document/document.module';
     EmployeeModule,
     DocumentTypeModule,
     DocumentModule,
+    DashboardModule
   ],
   controllers: [],
   providers: [],

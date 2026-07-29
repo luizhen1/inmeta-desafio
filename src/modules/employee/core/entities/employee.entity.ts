@@ -3,6 +3,9 @@ export class Employee {
     name: string;
     cpf: string;
     email: string;
+    role?: string;
+    department?: string;
+    requiredDocumentTypes: string[];
     deletedAt?: Date | null;
     createdAt?: Date;
     updatedAt?: Date;
@@ -11,6 +14,9 @@ export class Employee {
         name: string,
         cpf: string,
         email: string,
+        role?: string,
+        department?: string,
+        requiredDocumentTypes: string[] = [],
         deletedAt?: Date | null,
         id?: string,
         createdAt?: Date,
@@ -19,6 +25,9 @@ export class Employee {
         this.name = name;
         this.cpf = cpf;
         this.email = email;
+        this.role = role;
+        this.department = department;
+        this.requiredDocumentTypes = requiredDocumentTypes;
         this.deletedAt = deletedAt ?? null;
         this.id = id;
         this.createdAt = createdAt;
