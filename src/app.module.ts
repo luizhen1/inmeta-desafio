@@ -4,6 +4,7 @@ import { MongooseModule } from '@nestjs/mongoose/dist/mongoose.module';
 import { DocumentTypeModule } from './modules/document-type/document-type.module';
 import { DocumentModule } from './modules/document/document.module';
 import { DashboardModule } from './modules/dashboard/dashboard.module';
+import { HealthController } from './modules/health/health.controller';
 
 @Module({
   imports: [
@@ -11,9 +12,11 @@ import { DashboardModule } from './modules/dashboard/dashboard.module';
     EmployeeModule,
     DocumentTypeModule,
     DocumentModule,
-    DashboardModule
+    DashboardModule,
   ],
-  controllers: [],
+  controllers: [
+    HealthController,
+  ],
   providers: [],
 })
-export class AppModule {}
+export class AppModule { }
