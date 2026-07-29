@@ -1,3 +1,4 @@
+import { DocumentVersion } from '../entities/document-version.value-object';
 import { Document } from '../entities/document.entity';
 
 export interface FindAllFilters {
@@ -22,4 +23,10 @@ export interface IDocumentRepository {
   findByEmployeeAndType(employeeId: string, documentTypeId: string): Promise<Document | null>;
   update(id: string, data: Partial<Document>): Promise<Document | null>;
   delete(id: string): Promise<void>;
+  addVersionAtomic(
+    documentId: string,
+    expectedCurrentVersion: number,
+    newVersion: DocumentVersion,
+    newStatus: string
+  ): Promise<boolean>;
 }

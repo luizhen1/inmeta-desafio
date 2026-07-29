@@ -15,6 +15,7 @@ describe('GetDocumentByIdUseCase', () => {
       findByEmployeeAndType: jest.fn(),
       update: jest.fn(),
       delete: jest.fn(),
+      addVersionAtomic: jest.fn(),
     };
     useCase = new GetDocumentByIdUseCase(repository);
   });

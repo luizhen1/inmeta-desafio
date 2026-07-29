@@ -11,7 +11,7 @@ export class DocumentMongoRepository implements IDocumentRepository {
   constructor(
     @InjectModel(DocumentModel.name)
     private readonly model: Model<DocumentDocument>,
-  ) {}
+  ) { }
 
   private toDomain(doc: any): Document {
     const versions = (doc.versions || []).map(
@@ -45,7 +45,7 @@ export class DocumentMongoRepository implements IDocumentRepository {
     return this.toDomain(savedDoc);
   }
 
-// Adicione a importação de FindAllFilters e PaginatedResult no topo
+  // Adicione a importação de FindAllFilters e PaginatedResult no topo
   async findAll(filters: FindAllFilters): Promise<PaginatedResult<Document>> {
     const query: any = { deletedAt: null };
 
@@ -95,6 +95,31 @@ export class DocumentMongoRepository implements IDocumentRepository {
 
     if (!updatedDoc) return null;
     return this.toDomain(updatedDoc);
+  }
+
+  async addVersionAtomic(
+    documentId: string,
+    expectedCurrentVersion: number,
+    newVersion: DocumentVersion,
+    newStatus: string
+  ): Promise<boolean> {
+    const result = await this.model.updateOne(
+      {
+        _id: documentId,
+        currentVersion: expectedCurrentVersion,
+        deletedAt: null,
+      },
+      {
+        $set: {
+          currentVersion: expectedCurrentVersion + 1,
+          status: newStatus,
+          updatedAt: new Date(),
+        },
+        $push: { versions: newVersion },
+      }
+    ).exec();
+
+    return result.modifiedCount > 0;
   }
 
   async delete(id: string): Promise<void> {

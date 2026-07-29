@@ -15,6 +15,7 @@ describe('DeleteDocumentUseCase', () => {
       findByEmployeeAndType: jest.fn(),
       update: jest.fn(),
       delete: jest.fn(),
+      addVersionAtomic: jest.fn(),
     };
     useCase = new DeleteDocumentUseCase(repository);
   });
