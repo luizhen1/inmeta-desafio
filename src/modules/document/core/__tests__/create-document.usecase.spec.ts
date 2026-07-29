@@ -28,6 +28,7 @@ describe('CreateDocumentUseCase', () => {
       findByEmployeeAndType: jest.fn(),
       update: jest.fn(),
       delete: jest.fn(),
+      addVersionAtomic: jest.fn(),
     };
     empRepo = {
       create: jest.fn(),

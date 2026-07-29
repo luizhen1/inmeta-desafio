@@ -1,4 +1,4 @@
-import { NotFoundException } from '@nestjs/common';
+import { NotFoundException, ConflictException } from '@nestjs/common';
 import { UpdateDocumentUseCase } from '../usecases/update-document.usecase';
 import { IDocumentRepository } from '../repositories/document.repository.interface';
 import { Document } from '../entities/document.entity';
@@ -15,6 +15,7 @@ describe('UpdateDocumentUseCase', () => {
       findByEmployeeAndType: jest.fn(),
       update: jest.fn(),
       delete: jest.fn(),
+      addVersionAtomic: jest.fn(), // 👈 1. Adicionado no mock
     };
     useCase = new UpdateDocumentUseCase(repository);
   });
@@ -33,20 +34,38 @@ describe('UpdateDocumentUseCase', () => {
     expect(result).toEqual(updated);
   });
 
-  it('deve criar uma nova versão ao receber novos metadados/enviador', async () => {
-    const existing = new Document('emp1', 'type1', 'PENDING', 1, [{ version: 1, isActive: true, sentBy: 'user1', sentAt: new Date() }], 'doc1');
+  it('deve criar uma nova versão usando fluxo atômico ao receber novos metadados/enviador', async () => {
+    const existing = new Document('emp1', 'type1', 'PENDING', 1, [], 'doc1');
+    const updated = new Document('emp1', 'type1', 'SENT', 2, [], 'doc1'); // Simulação de como o banco retornaria
 
-    repository.findById.mockResolvedValue(existing);
-    repository.update.mockImplementation(async (id, data) => {
-      return new Document('emp1', 'type1', 'PENDING', data.currentVersion!, data.versions!, 'doc1');
-    });
+    // 👈 2. A primeira vez que o UseCase chamar findById, retorna o existing. A segunda vez, retorna o updated.
+    repository.findById
+      .mockResolvedValueOnce(existing)
+      .mockResolvedValueOnce(updated); 
+
+    // 👈 3. Simula o sucesso do Optimistic Lock
+    repository.addVersionAtomic.mockResolvedValue(true);
 
     const result = await useCase.execute('doc1', { sentBy: 'user2' });
 
+    expect(repository.addVersionAtomic).toHaveBeenCalled(); // Verifica se chamou a nova função
     expect(result.currentVersion).toBe(2);
-    expect(result.versions).toHaveLength(2);
-    expect(result.versions[0].isActive).toBe(false);
-    expect(result.versions[1].isActive).toBe(true);
+  });
+
+  // 👈 4. NOVO TESTE: Garantindo que a regra de concorrência lança o erro correto
+  it('deve lançar ConflictException se houver concorrência (Race Condition)', async () => {
+    const existing = new Document('emp1', 'type1', 'PENDING', 1, [], 'doc1');
+    
+    repository.findById.mockResolvedValue(existing);
+    
+    // Simula a falha atômica (outra requisição chegou antes)
+    repository.addVersionAtomic.mockResolvedValue(false);
+
+    await expect(useCase.execute('doc1', { sentBy: 'user2' })).rejects.toThrow(
+      ConflictException,
+    );
+
+    expect(repository.addVersionAtomic).toHaveBeenCalled();
   });
 
   it('deve lançar NotFoundException se o documento não for encontrado', async () => {
