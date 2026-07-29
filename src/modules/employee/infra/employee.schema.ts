@@ -1,21 +1,30 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { HydratedDocument } from 'mongoose';
-
-export type EmployeeDocument = HydratedDocument<EmployeeModel>;
+import { Document, Types } from 'mongoose';
 
 @Schema({ timestamps: true, collection: 'employees' })
-export class EmployeeModel {
+export class EmployeeModel extends Document {
   @Prop({ required: true })
   name!: string;
 
-  @Prop({ required: true, unique: true }) 
+  @Prop({ required: true, unique: true })
   cpf!: string;
 
   @Prop({ required: true, unique: true })
   email!: string;
 
-  @Prop({ default: true })
-  isActive!: boolean;
+  @Prop({ required: false })
+  role?: string;
+
+  @Prop({ required: false })
+  department?: string;
+
+  @Prop({ type: [{ type: Types.ObjectId, ref: 'DocumentTypeModel' }], default: [] })
+  requiredDocumentTypes!: string[];
+
+  @Prop({ required: false, default: null })
+  deletedAt?: Date | null;
 }
 
 export const EmployeeSchema = SchemaFactory.createForClass(EmployeeModel);
+
+export type EmployeeDocument = EmployeeModel & Document;
