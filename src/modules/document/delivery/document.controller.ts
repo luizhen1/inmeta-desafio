@@ -10,6 +10,7 @@ import { UpdateDocumentDto } from './dtos/update-document.dto';
 import { GenerateUploadUrlUseCase } from '../core/usecases/generate-upload-url.usecase';
 import { GenerateUploadUrlDto } from './dtos/generate-upload-url.dto';
 import { ListDocumentsDto } from './dtos/list-documents.dto';
+import { GenerateDownloadUrlUseCase } from '../core/usecases/generate-download-url.usecase';
 
 @ApiTags('Documents')
 @Controller('documents')
@@ -21,6 +22,7 @@ export class DocumentController {
     private readonly updateDocumentUseCase: UpdateDocumentUseCase,
     private readonly deleteDocumentUseCase: DeleteDocumentUseCase,
     private readonly generateUploadUrlUseCase: GenerateUploadUrlUseCase,
+    private readonly generateDownloadUrlUseCase: GenerateDownloadUrlUseCase,
   ) { }
 
   @Post('upload-url')
@@ -36,6 +38,14 @@ export class DocumentController {
   @ApiResponse({ status: 409, description: 'Este colaborador já possui um documento ativo deste tipo.' })
   async create(@Body() createDocumentDto: CreateDocumentDto) {
     return this.createDocumentUseCase.execute(createDocumentDto);
+  }
+
+  @Get(':id/download-url')
+  @ApiOperation({ summary: 'Gera uma URL pré-assinada (Presigned URL) para download seguro simulado no S3' })
+  @ApiResponse({ status: 200, description: 'URL de download gerada com sucesso.' })
+  @ApiResponse({ status: 404, description: 'Documento não encontrado.' })
+  async generateDownloadUrl(@Param('id') id: string) {
+    return this.generateDownloadUrlUseCase.execute(id);
   }
 
   @Get()
