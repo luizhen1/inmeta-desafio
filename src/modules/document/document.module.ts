@@ -7,8 +7,9 @@ import { ListDocumentsUseCase } from './core/usecases/list-documents.usecase';
 import { GetDocumentByIdUseCase } from './core/usecases/get-document-by-id.usecase';
 import { UpdateDocumentUseCase } from './core/usecases/update-document.usecase';
 import { DeleteDocumentUseCase } from './core/usecases/delete-document.usecase';
-import { GenerateUploadUrlUseCase } from './core/usecases/generate-upload-url.usecase'; // 👈 Importe o UseCase
-import { MockStorageProvider } from './infra/storage/mock-storage.provider'; // 👈 Importe o Storage Provider
+import { GenerateUploadUrlUseCase } from './core/usecases/generate-upload-url.usecase';
+import { GenerateDownloadUrlUseCase } from './core/usecases/generate-download-url.usecase'; // 👈 Novo import adicionado
+import { MockStorageProvider } from './infra/storage/mock-storage.provider';
 import { DocumentController } from './delivery/document.controller';
 import { EmployeeModule } from '../employee/employee.module';
 import { DocumentTypeModule } from '../document-type/document-type.module';
@@ -61,6 +62,11 @@ import { DocumentTypeModule } from '../document-type/document-type.module';
       provide: DeleteDocumentUseCase,
       useFactory: (repo) => new DeleteDocumentUseCase(repo),
       inject: ['IDocumentRepository'],
+    },
+    {
+      provide: GenerateDownloadUrlUseCase,
+      useFactory: (repo) => new GenerateDownloadUrlUseCase(repo),
+      inject: ['IDocumentRepository'], 
     },
   ],
   exports: ['IDocumentRepository'],
