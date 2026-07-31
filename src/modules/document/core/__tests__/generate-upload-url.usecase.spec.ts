@@ -8,6 +8,7 @@ describe('GenerateUploadUrlUseCase', () => {
   beforeEach(() => {
     storageProvider = {
       generatePresignedUploadUrl: jest.fn(),
+      generatePresignedDownloadUrl: jest.fn(),
     };
     useCase = new GenerateUploadUrlUseCase(storageProvider);
   });
