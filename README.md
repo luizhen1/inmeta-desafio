@@ -30,7 +30,7 @@ O fluxo de dados obedece a seguinte hierarquia estrita:
 
 ## 🗄️ Modelagem de Dados (MongoDB)
 A modelagem foi pensada de forma desnormalizada para otimizar a leitura (Embedded Documents no histórico de versões), utilizando índices compostos para garantir atomicidade e prevenir *Race Conditions*.
-<img width="1261" height="835" alt="image" src="https://github.com/user-attachments/assets/cfc998d7-5514-49a9-ae65-7719ea7e98af" />
+<img width="1260" height="835" alt="image" src="https://github.com/user-attachments/assets/809b8b10-cff4-4c64-80b9-15f264a6b928" />
 
 ---
 
