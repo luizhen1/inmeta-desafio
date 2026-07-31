@@ -8,8 +8,8 @@ import { GetDocumentByIdUseCase } from './core/usecases/get-document-by-id.useca
 import { UpdateDocumentUseCase } from './core/usecases/update-document.usecase';
 import { DeleteDocumentUseCase } from './core/usecases/delete-document.usecase';
 import { GenerateUploadUrlUseCase } from './core/usecases/generate-upload-url.usecase';
-import { GenerateDownloadUrlUseCase } from './core/usecases/generate-download-url.usecase'; // 👈 Novo import adicionado
-import { MockStorageProvider } from './infra/storage/mock-storage.provider';
+import { GenerateDownloadUrlUseCase } from './core/usecases/generate-download-url.usecase';
+import { S3StorageAdapter } from './infra/storage/s3-storage.adapter';
 import { DocumentController } from './delivery/document.controller';
 import { EmployeeModule } from '../employee/employee.module';
 import { DocumentTypeModule } from '../document-type/document-type.module';
@@ -30,7 +30,7 @@ import { DocumentTypeModule } from '../document-type/document-type.module';
     },
     {
       provide: 'IStorageProvider',
-      useClass: MockStorageProvider,
+      useClass: S3StorageAdapter,
     },
     {
       provide: GenerateUploadUrlUseCase,
@@ -65,10 +65,10 @@ import { DocumentTypeModule } from '../document-type/document-type.module';
     },
     {
       provide: GenerateDownloadUrlUseCase,
-      useFactory: (repo) => new GenerateDownloadUrlUseCase(repo),
-      inject: ['IDocumentRepository'], 
+      useFactory: (repo, storage) => new GenerateDownloadUrlUseCase(repo, storage),
+      inject: ['IDocumentRepository', 'IStorageProvider'],
     },
   ],
   exports: ['IDocumentRepository'],
 })
-export class DocumentModule {}
+export class DocumentModule { }

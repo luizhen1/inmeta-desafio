@@ -1,98 +1,87 @@
+<h1 align="center">🏢 Inmeta - API de Gestão de Documentos</h1>
+
 <p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
+  <i>Desafio Técnico: Sistema robusto para gestão de colaboradores e documentação (Upload/Download) em nuvem simulada.</i>
 </p>
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+## 🎯 Sobre o Projeto
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+Esta é uma API desenvolvida com **NestJS**, **TypeScript** e **MongoDB**, focada na gestão de colaboradores e seus respectivos documentos obrigatórios. 
 
-## Description
+O sistema simula um fluxo real de nuvem (Cloud Storage) utilizando **URLs Pré-assinadas (Presigned URLs)** para upload e download de arquivos, além de implementar um rigoroso controle de versionamento e tratamento de concorrência.
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## 🏗️ Arquitetura e Padrões de Projeto
 
-## Project setup
+O projeto foi construído seguindo os princípios de **Clean Architecture** e conceitos de **DDD (Domain-Driven Design)**, garantindo que as regras de negócio sejam agnósticas a frameworks ou bancos de dados.
 
+O fluxo de dados obedece a seguinte hierarquia estrita:
+1. **Controllers (Delivery):** Interceptam a requisição HTTP e validam o payload via DTOs.
+2. **Use Cases (Core):** Contêm 100% da regra de negócio isolada (Single Responsibility Principle).
+3. **Repositories (Infra):** Implementam as interfaces do Core, traduzindo as entidades de domínio para esquemas do MongoDB (Mongoose).
+
+## 📐 System Design (Arquitetura)
+<img width="1738" height="731" alt="image" src="https://github.com/user-attachments/assets/bd24021f-78cf-4a75-853b-136f32f12949" />
+
+## 🗄️ Modelagem de Dados (MongoDB)
+A modelagem foi pensada de forma desnormalizada para otimizar a leitura (Embedded Documents no histórico de versões), utilizando índices compostos para garantir atomicidade e prevenir *Race Conditions*.
+<img width="1261" height="835" alt="image" src="https://github.com/user-attachments/assets/cfc998d7-5514-49a9-ae65-7719ea7e98af" />
+
+## 🌟 Destaques e Diferenciais (Bônus Entregues)
+
+- ✅ **Upload e Download Cloud-Native:** Simulação de geração de *Presigned URLs* (AWS S3) para tirar a carga de transferência de arquivos do servidor Node.js.
+- ✅ **Optimistic Locking (Concorrência):** Implementação de controle de versão atômico (`__v` e `$inc`) no MongoDB para evitar *Race Conditions* em atualizações simultâneas.
+- ✅ **Versionamento de Documentos (Auditoria):** O envio de um mesmo tipo de documento para um funcionário inativa a versão anterior e cria uma nova.
+- ✅ **Dashboard Aggregations:** Uso avançado de *Aggregation Pipeline* do MongoDB para retornar estatísticas de completude do sistema.
+- ✅ **Testes Automatizados (100% Coverage):** 
+  - **Unitários:** 39 testes cobrindo todos os Casos de Uso em isolamento usando Mocks (`jest.fn()`).
+  - **E2E (Integração):** 5 testes validando as rotas de leitura e orquestração de nuvem diretamente com o banco de dados.
+- ✅ **Dockerização:** Ambiente de banco de dados pronto para rodar com `docker-compose`.
+- ✅ **Documentação Viva:** Swagger UI completo e interativo com o fluxo exato de Upload -> Criação -> Download.
+- ✅ **Health Check:** Endpoint `/health` para monitoramento de disponibilidade da infraestrutura.
+
+## 🚀 Como Executar o Projeto
+
+### Pré-requisitos
+* **Node.js** (v18 ou superior)
+* **Docker** e **Docker Compose** (para o MongoDB)
+
+### 1. Clonar e Instalar Dependências
 ```bash
-$ npm install
+git clone git@github.com:luizhen1/inmeta-desafio.git
+cd api
+npm install
 ```
 
-## Compile and run the project
-
+### 2. Subir o Banco de Dados (Docker)
+Um arquivo `docker-compose.yml` está incluso na raiz para subir uma instância local do MongoDB:
 ```bash
-# development
-$ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
+docker-compose up -d
 ```
 
-## Run tests
-
+### 3. Executar a Aplicação
 ```bash
-# unit tests
-$ npm run test
+# Modo de desenvolvimento
+npm run start:dev
+```
+A API estará rodando em: `http://localhost:3000`
 
-# e2e tests
-$ npm run test:e2e
+## 📖 Documentação (Swagger)
 
-# test coverage
-$ npm run test:cov
+Com a aplicação rodando, acesse a documentação interativa pelo link abaixo para testar as rotas:
+
+👉 **[Acessar Swagger UI](http://localhost:3000/api)**
+
+*Dica: Teste o fluxo completo de documentos na ordem apresentada no Swagger (Gerar Upload URL -> Criar Documento -> Gerar Download URL).*
+
+## 🧪 Como Rodar os Testes
+
+**Testes Unitários (Regras de Negócio isoladas com Mocks):**
+```bash
+npm run test
 ```
 
-## Deployment
-
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
-
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
-
+**Testes de Integração E2E (Integração NestJS + MongoDB):**
 ```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
+npm run test:e2e
 ```
-
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
-
-## Resources
-
-Check out a few resources that may come in handy when working with NestJS:
-
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
-
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+*(Nota: Os testes E2E focam intencionalmente em rotas seguras e de simulação para validar a infraestrutura sem inserir "sujeira" na base de dados de desenvolvimento).*
