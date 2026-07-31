@@ -67,11 +67,28 @@ npm install
 ```
 
 ## 2. Subir a Infraestrutura (Docker)
+> ⚠️ **Importante:** Certifique-se de que o **Docker Desktop** (ou o serviço do Docker) esteja instalado e **em execução** na sua máquina antes de rodar o comando abaixo.
 ```bash
 docker-compose up -d
 ```
 
-## 3. Executar a Aplicação (Modo de desenvolvimento)
+## 3. Criar o Bucket no LocalStack (AWS S3)
+> ⚠️ Atenção: Como o LocalStack roda em memória no Docker, sempre que o contêiner for reiniciado ou destruído, você precisará executar o comando abaixo uma única vez para criar o bucket de documentos:
+```bash
+docker exec -it inmeta-localstack awslocal s3 mb s3://inmeta-documents-bucket
+```
+
+## 🛠️ Comandos Úteis do LocalStack (CLI)
+  - Verificar se o bucket existe:
+```bash
+docker exec -it inmeta-localstack awslocal s3 ls
+```
+  - Visualizar os arquivos dentro do bucket:
+```bash
+docker exec -it inmeta-localstack awslocal s3 ls s3://inmeta-documents-bucket
+```
+
+## 4. Executar a Aplicação (Modo de desenvolvimento)
 ```bash
 npm run start:dev
 ```
