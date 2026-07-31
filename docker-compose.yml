@@ -11,5 +11,20 @@ services:
     volumes:
       - mongo_data:/data/db
 
+  localstack:
+    image: localstack/localstack:3.4.0
+    container_name: inmeta-localstack
+    ports:
+      - "4566:4566"
+    environment:
+      - AWS_DEFAULT_REGION=us-east-1
+
+  jaeger:
+    image: jaegertracing/all-in-one:latest
+    container_name: inmeta-jaeger
+    ports:
+      - "16686:16686"
+      - "4318:4318"
+
 volumes:
   mongo_data:
