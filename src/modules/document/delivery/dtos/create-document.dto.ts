@@ -1,53 +1,47 @@
 import { ApiProperty } from '@nestjs/swagger';
-import {
-  IsBoolean,
-  IsMongoId,
-  IsNotEmpty,
-  IsObject,
-  IsOptional,
-  IsString,
-} from 'class-validator';
+import { IsString, IsNotEmpty, IsObject, IsOptional } from 'class-validator';
 
 export class CreateDocumentDto {
-  @ApiProperty({
-    example: '66a6811718a6c27ba9ca0f90',
-    description: 'ID do colaborador (Employee)',
+  @ApiProperty({ 
+    example: '6a6bfb9a25097dc9d3e533ab',
+    description: 'ID do colaborador'
   })
-  @IsMongoId({ message: 'O employeeId deve ser um ObjectId do MongoDB válido.' })
-  @IsNotEmpty({ message: 'O employeeId é obrigatório.' })
-  employeeId!: string;
+  @IsString()
+  @IsNotEmpty()
+  employeeId: string;
+
+  @ApiProperty({ 
+    example: '6a6bfbd025097dc9d3e533ac',
+    description: 'ID do tipo de documento'
+  })
+  @IsString()
+  @IsNotEmpty()
+  documentTypeId: string;
+
+  @ApiProperty({ 
+    example: 'SENT',
+    description: 'Status do documento'
+  })
+  @IsString()
+  @IsNotEmpty()
+  status: string;
+
+  @ApiProperty({ 
+    example: 'luiz.lime@inmeta.com.br',
+    description: 'E-mail ou identificação de quem enviou'
+  })
+  @IsString()
+  @IsNotEmpty()
+  sentBy: string;
 
   @ApiProperty({
-    example: '66a6811718a6c27ba9ca0f93',
-    description: 'ID do tipo de documento (DocumentType)',
+    example: {
+      fileKey: 'casamento.png',
+      fileSize: '117KB'
+    },
+    description: 'Metadados adicionais, incluindo a chave do arquivo no S3'
   })
-  @IsMongoId({ message: 'O documentTypeId deve ser um ObjectId do MongoDB válido.' })
-  @IsNotEmpty({ message: 'O documentTypeId é obrigatório.' })
-  documentTypeId!: string;
-
-  @ApiProperty({
-    example: 'PENDING',
-    description: 'Status do documento (ex: PENDING, APPROVED, REJECTED)',
-    default: 'PENDING',
-  })
-  @IsString({ message: 'O status deve ser uma string.' })
-  @IsOptional()
-  status?: string;
-
-  @ApiProperty({
-    example: 'joao.silva@inmeta.com.br',
-    description: 'Identificador/E-mail de quem enviou o documento',
-  })
-  @IsString({ message: 'O campo sentBy deve ser uma string.' })
-  @IsNotEmpty({ message: 'O campo sentBy é obrigatório.' })
-  sentBy!: string;
-
-  @ApiProperty({
-    example: { url: 'https://storage.inmeta.com/docs/rg.pdf', fileSize: '2MB' },
-    description: 'Metadados flexíveis da versão do documento',
-    required: false,
-  })
-  @IsObject({ message: 'O metadata deve ser um objeto.' })
+  @IsObject()
   @IsOptional()
   metadata?: Record<string, any>;
 }

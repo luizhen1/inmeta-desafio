@@ -26,14 +26,36 @@ export class DocumentController {
   ) { }
 
   @Post('upload-url')
-  @ApiOperation({ summary: 'Gera uma URL pré-assinada (Presigned URL) para upload simulado no S3' })
+  @ApiOperation({
+    summary: 'Gera uma URL pré-assinada (Presigned URL) para upload no S3',
+    description: `
+**Como testar o fluxo de upload completo:**
+
+1. Execute esta rota informando os dados do arquivo (ex: **fileName: "bob.jpg"**).
+2. Copie a **url** retornada na resposta.
+3. Abra o **Postman** (ou Insomnia) e crie uma requisição **PUT** colando a URL na barra de endereço.
+4. ⚠️ **ATENÇÃO:** Vá na aba **Params** e desmarque os parâmetros **x-amz-sdk-checksum-algorithm** e **x-amz-checksum-crc32** (o SDK da AWS injeta isso por padrão, mas mantê-los ativos no Postman sem tratar o hash causará erro).
+5. Na aba **Body**, escolha **binary**, selecione o arquivo físico no seu computador e clique em Send (Status 200 esperado).
+6. Utilize a **fileKey** gerada aqui no payload da rota de criação (**POST /documents**).
+    `
+  })
   @ApiResponse({ status: 201, description: 'URL pré-assinada gerada com sucesso.' })
   async generateUploadUrl(@Body() dto: GenerateUploadUrlDto) {
     return this.generateUploadUrlUseCase.execute(dto.fileName, dto.mimeType, dto.fileSizeInBytes);
   }
 
   @Post()
-  @ApiOperation({ summary: 'Cria um novo documento' })
+  @ApiOperation({
+    summary: 'Cria um novo documento',
+    description: `
+Cria o registro do documento no banco de dados.
+
+**Para vincular o arquivo enviado ao S3:**
+
+1. Passe a **fileKey** gerada na rota de upload dentro do objeto **metadata** (ex: **"fileKey": "bob.jpg"**).
+2. Copie o **id** gerado na resposta desta requisição para testar a geração da URL de download.
+    `
+  })
   @ApiResponse({ status: 201, description: 'Documento criado com sucesso.' })
   @ApiResponse({ status: 409, description: 'Este colaborador já possui um documento ativo deste tipo.' })
   async create(@Body() createDocumentDto: CreateDocumentDto) {
@@ -41,7 +63,15 @@ export class DocumentController {
   }
 
   @Get(':id/download-url')
-  @ApiOperation({ summary: 'Gera uma URL pré-assinada (Presigned URL) para download seguro simulado no S3' })
+  @ApiOperation({
+    summary: 'Gera uma URL pré-assinada para visualizar/baixar o documento do S3',
+    description: `
+**Como testar a visualização:**
+1. Insira o **id** de um documento existente que possua a propriedade **fileKey** cadastrada no banco.
+2. Copie a **downloadUrl** gigante que será retornada na resposta.
+3. Cole a URL completa em uma **nova aba do seu navegador**. O arquivo original deve ser exibido ou baixado automaticamente!
+    `
+  })
   @ApiResponse({ status: 200, description: 'URL de download gerada com sucesso.' })
   @ApiResponse({ status: 404, description: 'Documento não encontrado.' })
   async generateDownloadUrl(@Param('id') id: string) {
