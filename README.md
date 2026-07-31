@@ -116,7 +116,7 @@ Você pode testar todo o fluxo de arquivos de forma simples utilizando o Swagger
   - O arquivo armazenado no S3 do LocalStack será aberto ou baixado imediatamente no seu navegador!
 
   ## 🧪 Como Rodar os Testes
-  Testes Unitários (Casos de Uso em isolamento):
+  > ⚠️ **Importante:** Para executar os testes sem nenhum erro, certifique-se de que os contêineres do Docker (**MongoDB** e **LocalStack**) estejam em execução (`docker-compose up -d`).
   ```bash
   npm run test
   ```
