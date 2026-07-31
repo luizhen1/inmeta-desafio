@@ -6,7 +6,7 @@ import { AppModule } from './../src/app.module';
 
 describe('Testes de Integração da API (e2e)', () => {
   let app: INestApplication<App>;
-  const validMongoIdButFake = '507f1f77bcf86cd799439011'; 
+  const validMongoIdButFake = '507f1f77bcf86cd799439011';
 
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -52,13 +52,13 @@ describe('Testes de Integração da API (e2e)', () => {
       .post('/documents/upload-url')
       .send({
         fileName: 'rg_teste.pdf',
-        contentType: 'application/pdf'
+        contentType: 'application/pdf',
       })
-      .expect(201) // Padrão do NestJS para rotas POST com sucesso
+      .expect(201)
       .then((response) => {
-        expect(response.body).toHaveProperty('uploadUrl');
-        expect(response.body).toHaveProperty('fileKey');
-        expect(response.body.uploadUrl).toContain('inmeta-documents-bucket');
+        expect(response.body).toHaveProperty('url');
+        expect(response.body).toHaveProperty('expiresIn');
+        expect(response.body.url).toContain('inmeta-documents-bucket');
       });
   });
 

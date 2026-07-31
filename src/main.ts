@@ -2,9 +2,15 @@ import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
+import { Logger } from 'nestjs-pino';
+import './tracing';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  // 1. Adicionamos o { bufferLogs: true }
+  const app = await NestFactory.create(AppModule, { bufferLogs: true });
+
+  // 2. Substituímos o logger padrão pelo Pino
+  app.useLogger(app.get(Logger));
 
   app.useGlobalPipes(
     new ValidationPipe({
@@ -27,5 +33,6 @@ async function bootstrap() {
   await app.listen(3000);
   console.log('🚀 Aplicação rodando em: http://localhost:3000');
   console.log('📚 Documentação Swagger: http://localhost:3000/api/docs');
+  console.log('🔍 Jaeger Tracing UI: http://localhost:16686');
 }
 bootstrap();

@@ -19,5 +19,12 @@ services:
     environment:
       - AWS_DEFAULT_REGION=us-east-1
 
+  jaeger:
+    image: jaegertracing/all-in-one:latest
+    container_name: inmeta-jaeger
+    ports:
+      - "16686:16686"
+      - "4318:4318"
+
 volumes:
   mongo_data:
