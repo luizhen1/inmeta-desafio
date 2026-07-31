@@ -26,7 +26,7 @@ O fluxo de dados obedece a seguinte hierarquia estrita:
 ---
 
 ## 📐 System Design (Arquitetura)
-<img width="1738" height="731" alt="image" src="https://github.com/user-attachments/assets/bd24021f-78cf-4a75-853b-136f32f12949" />
+<img width="1480" height="666" alt="image" src="https://github.com/user-attachments/assets/c39b0f9a-586b-44c1-8292-15343cde3001" />
 
 ## 🗄️ Modelagem de Dados (MongoDB)
 A modelagem foi pensada de forma desnormalizada para otimizar a leitura (Embedded Documents no histórico de versões), utilizando índices compostos para garantir atomicidade e prevenir *Race Conditions*.
